@@ -144,4 +144,8 @@ if (ready):
 	#send attack code
 	clientSocket.send(attackCode.encode('utf-8'))
 
-	
+	damage = client.recv(1024).decode('utf-8')
+	modifier = client.recv(1024).decode('utf-8')
+
+	print(damage)
+	print(modifier)
