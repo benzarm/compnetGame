@@ -162,15 +162,22 @@ socket2.send("1".encode('utf-8'))
 userCode2 = socket2.recv(1024).decode('utf-8')
 
 while(1):
-	time.sleep(1)
+	print("start of while loop")
 	#send over ok
+	time.sleep(0.01)
 	socket1.send("1".encode('utf-8'))
 	#receive
+	print("after send, before receive")
+	time.sleep(0.01)
 	attackCode1 = socket1.recv(1024).decode('utf-8')
 
+	print("after receive")
+
 	#send over ok
+	time.sleep(0.01)
 	socket2.send("1".encode('utf-8'))
 	#receive
+	time.sleep(0.01)
 	attackCode2 = socket2.recv(1024).decode('utf-8')
 
 	#process attacks
@@ -184,14 +191,19 @@ while(1):
 	print("player 2's modifier: " + str(modifier2))
 
 	#send over damage and modifiers to server to keep track of health clientside
+	time.sleep(0.01)
 	socket1.send(str(damage2).encode('utf-8'))
+	time.sleep(0.01)
 	socket2.send(str(damage1).encode('utf-8'))
+	time.sleep(0.01)
 	socket1.send(str(modifier1).encode('utf-8'))
+	time.sleep(0.01)
 	socket2.send(str(modifier2).encode('utf-8'))
 
-	if (socket1.recv(1024).decode('utf-8') == "0"):
-		socket1.send(str(damage2).encode('utf-8'))
-		socket2.send(str(modifier2).encode('utf-8'))
+	# if (socket1.recv(1024).decode('utf-8') == "0"):
+	# 	socket1.send(str(damage2).encode('utf-8'))
+	# 	socket2.send(str(modifier2).encode('utf-8'))
 
 	#reset modifier	
 	modifier = 0
+
