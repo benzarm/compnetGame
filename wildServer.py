@@ -2,12 +2,19 @@ from socket import *
 import threading
 import sys
 import random
+import time
 
 #process the user attack
 def processAttack(attackCode, userCode, opponentCode):
 	#roll the dice
 	diceRoll = random.randint(1,20)
+
+	#modifier: 1 for block/roll, 2 for heal, 3 for curse
 	modifier = 0
+
+	#to keep track of how much health someone has
+	damage = 0
+
 	#fighter
 	if (userCode == "A"):
 		#slash
@@ -18,31 +25,31 @@ def processAttack(attackCode, userCode, opponentCode):
 				#increased dmg against ranger
 				if (opponentCode == "C"):
 					damage += 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("missed slash")
-				return (damage, modifier)
+				return damage, modifier
 		#block
 		elif (attackCode == "A2"):
 			if (diceRoll >= 14):
 				print("roll succeeded")
 				modifier = 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("roll failed")
-				return (damage, modifier)
+				return damage, modifier
 		#charge
-		elif (attCode == "A3"):
+		elif (attackCode == "A3"):
 			if (diceRoll >= 12):
 				print("charge succeeded")
 				damage = 5
 				#increased dmg against ranger
 				if (opponentCode == "C"):
 					damage += 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("charge failed")
-				return (damage, modifier)
+				return damage, modifier
 	#mage 
 	if (userCode == "B"):
 		#attack spell
@@ -53,28 +60,29 @@ def processAttack(attackCode, userCode, opponentCode):
 				#increased dmg against fighter
 				if (opponentCode == "A"):
 					damage += 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("missed attack spell")
-				return (damage, modifier)
+				return damage, modifier
 		#heal
 		elif (attackCode == "B2"):
 			if (diceRoll >= 3):
 				print("healing succeeded")
 				modifier = 2
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("healing failed")
-				return (damage, modifier)
+				return damage, modifier
 		#curse
-		elif (attCode == "B3"):
+		elif (attackCode == "B3"):
 			if (diceRoll >= 7):
 				print("curse succeeded")
+				damage = 2
 				modifier = 3
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("curse failed")
-				return (damage, modifier)
+				return damage, modifier
 
 	#ranger 
 	if (userCode == "C"):
@@ -86,31 +94,33 @@ def processAttack(attackCode, userCode, opponentCode):
 				#increased dmg against mage
 				if (opponentCode == "B"):
 					damage += 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("missed normal arrow")
-				return (damage, modifier)
-		#fire arrow
+				return damage, modifier
+		#dodge
 		elif (attackCode == "C2"):
+			if (diceRoll >= 12):
+				print("dodge succeeded")
+				modifier = 1
+				return damage, modifier
+			else:
+				print("dodge failed")
+				return damage, modifier
+
+		#fire arrow
+		elif (attackCode == "C3"):
 			if (diceRoll >= 16):
 				print("fire arrow succeeded")
 				damage = 9
 				#increased dmg against mage
 				if (opponentCode == "B"):
 					damage += 1
-				return (damage, modifier)
+				return damage, modifier
 			else:
 				print("fire arrow failed")
-				return (damage, modifier)
-		#dodge
-		elif (attCode == "C3"):
-			if (diceRoll >= 12):
-				print("dodge succeeded")
-				modifier = 1
-				return (damage, modifier)
-			else:
-				print("dodge failed")
-				return (damage, modifier)
+				return damage, modifier
+		
 
 
 serverSocket = socket(AF_INET, SOCK_STREAM) #TCP (reliable)
@@ -128,41 +138,60 @@ print("Player 1 joined, waiting to accept second player...")
 socket2, addr2 = serverSocket.accept()
 print("Player 2 joined, ready to begin!")
 
-#send over ready to go!
+###receive everything from client###
+###everything is staggered here to remove issues of ordering###
+
+#send over ok
 socket1.send("1".encode('utf-8'))
+#receive
+userName1 = socket1.recv(1024).decode('utf-8')
+
+#send over ok
 socket2.send("1".encode('utf-8'))
+#receive
+userName2 = socket2.recv(1024).decode('utf-8')
 
-#1 is block/dodge, 2 is heal, 3 is curse
-modifier = 0
+#send over ok
+socket1.send("1".encode('utf-8'))
+#receive
+userCode1 = socket1.recv(1024).decode('utf-8')
 
-#receive character codes
-userCode1 = str(socket1.recv(1024))
-userCode2 = str(socket2.recv(1024))
+#send over ok
+socket2.send("1".encode('utf-8'))
+#receive
+userCode2 = socket2.recv(1024).decode('utf-8')
 
-#receive attack codes
-attackCode1 = str(socket1.recv(1024))
-attackCode2 = str(socket2.recv(1024))
+while(1):
+	time.sleep(1)
+	#send over ok
+	socket1.send("1".encode('utf-8'))
+	#receive
+	attackCode1 = socket1.recv(1024).decode('utf-8')
 
-#process attacks
-damage1, modifier1 = processAttack(attackCode1, userCode1, userCode2)
-damage2, modifier2 = processAttack(attackCode1, userCode1, userCode2)
+	#send over ok
+	socket2.send("1".encode('utf-8'))
+	#receive
+	attackCode2 = socket2.recv(1024).decode('utf-8')
 
-print("damage player 1 does: " + damage1)
-print("damage player 2 does: " + damage2)
-print("player 1's modifier: " + modifier1)
-print("player 2's modifier: " + modifier2)
+	#process attacks
+	damage1, modifier1 = processAttack(attackCode1, userCode1, userCode2)
+	damage2, modifier2 = processAttack(attackCode2, userCode2, userCode1)
 
+	#for testing purposes
+	print("damage player 1 does: " + str(damage1))
+	print("damage player 2 does: " + str(damage2))
+	print("player 1's modifier: " + str(modifier1))
+	print("player 2's modifier: " + str(modifier2))
 
+	#send over damage and modifiers to server to keep track of health clientside
+	socket1.send(str(damage2).encode('utf-8'))
+	socket2.send(str(damage1).encode('utf-8'))
+	socket1.send(str(modifier1).encode('utf-8'))
+	socket2.send(str(modifier2).encode('utf-8'))
 
+	if (socket1.recv(1024).decode('utf-8') == "0"):
+		socket1.send(str(damage2).encode('utf-8'))
+		socket2.send(str(modifier2).encode('utf-8'))
 
-
-#figure out how much damage each attack does including if they hit
-	#keep track of health in client, server sends damage done back to client
-	#put in greater loop to repeat attacks
-
-
-#update health for each player and send health back
-
-#determine if a player is dead or not
-
-#create gui
+	#reset modifier	
+	modifier = 0
