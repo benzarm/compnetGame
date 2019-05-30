@@ -93,12 +93,12 @@ else:
 ATTACK SELECT
 '''
 while(1):
-	print("start of loop")
 	#time.sleep(2)
 	clientSocket.recv(1024)
 
-	print("after first receive")
 	while(1):
+		print("\n")
+
 		#fighter options
 		if(userCode == "A"):
 			#prompt
@@ -161,6 +161,9 @@ while(1):
 	#send attack code
 	clientSocket.send(attackCode.encode('utf-8'))
 
+	message = clientSocket.recv(1024).decode('utf-8')
+	print("\n" + message)
+
 	damage = int(clientSocket.recv(1024).decode('utf-8'))
 	modifier = int(clientSocket.recv(1024).decode('utf-8'))
 
@@ -178,16 +181,14 @@ while(1):
 	health -= damage
 
 	print("damage taken: " + str(damage))
-	print("modifier: " + str(modifier))
 
 	# if(health <= 0):
 	# 	break
 
-	print("your current health: " + str(health))
+	print("your current health: " + str(health) + "\n")
 
 	#reset modifier
 	modifier = 0
-	print("end of loop")
 
 #print("you died!")
 #clientSocket.close()
