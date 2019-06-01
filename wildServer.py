@@ -4,17 +4,33 @@ import sys
 import random
 import time
 
-#process the user attack
+'''
+PROCESS USER ATTACK
+
+PARAMETERS: This function takes in the attack code of the attack, the userCode
+which tells us the class of the person  attacking, the opponent code which is
+the class of the user defending, the username of both for messages, and finally
+the socket of the person attacking so they know if their attack hits.
+
+RETURNS: Returns the damage done and modifier of the attack. First, the "dice" 
+is rolled to determine if the attack hits. Then, the the usercode and 
+attackcode are used to get the right attack. Additions are added since certain
+classes have advantages over other classes. Finally, a modifier is associated 
+with some special attacks which are also returned so we can process them client 
+side later.
+'''
 def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userNameDefender, socket):
-	
-	#roll the dice
+
+	#roll the dice so later we can determine if an attack hits
 	diceRoll = random.randint(1,20)
+
+	#random number between 1 and 3 for randomizing attack messages (more variety)
 	comm = random.randint(1,3)
 
-	#modifier: 1 for block/roll, 2 for heal, 3 for curse
+	#modifier: 0 by default, 1 for block/roll, 2 for heal, and 3 for curse
 	modifier = 0
 
-	#to keep track of how much health someone has
+	#damage the attack does to be sent to the client later for health calculation
 	damage = 0
 
 	##################################################
@@ -33,7 +49,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 				elif(comm == 2):
 					socket.send(("A deft slash cuts across " + userNameDefender + "'s chest...\n").encode('utf-8'))
 				elif(comm == 3):
-					socket.send(("As the adrenaline pumps through your veins, you slash down on" + userNameDefender + "...\n").encode('utf-8'))
+					socket.send(("As the adrenaline pumps through your veins, you slash down on " + userNameDefender + "...\n").encode('utf-8'))
 
 				#set dmg
 				damage = 3
@@ -46,6 +62,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if slash fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a whistle of your blade in the wind, you miss " + userNameDefender + "...\n").encode('utf-8'))
@@ -61,27 +78,29 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if block succeeds
 			if (diceRoll >= 14):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a shockingly easy pivot... like very easily, you dodge out of " + userNameDefender + "'s attack! ...\n").encode('utf-8'))
 				elif(comm == 2):
-					socket.send(("A tuck and a roll is all you needed to escape" + userNameDefender + "'s harm! ...\n").encode('utf-8'))
+					socket.send(("A tuck and a roll is all you needed to escape " + userNameDefender + "'s harm! ...\n").encode('utf-8'))
 				elif(comm == 3):
 					socket.send(("With catlike reflexes, you quickly evade their attack...\n").encode('utf-8'))
 
-				#set modifier to dodge
+				#set modifier to dodge for later processing
 				modifier = 1
 
 				return damage, modifier
 
 			#if block fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send((userNameDefender + " scoffs: '" + userNameAttacker + " great job stumbling away from me' as you fail your evasion...\n").encode('utf-8'))
-				if(comm == 2):
+					socket.send((userNameDefender + " scoffs: '" + userNameAttacker + ", great job stumbling away from me as you fail your evasion...\n").encode('utf-8'))
+				elif(comm == 2):
 					socket.send(("With a poorly timed dodge tactic, you can't succesfully dodge...\n").encode('utf-8'))
-				if(comm == 3):
+				elif(comm == 3):
 					socket.send(("A misplaced twig trips you on your attempt to evade their advances...\n").encode('utf-8'))
 
 				return damage, modifier
@@ -93,7 +112,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send(("With an air of beligerance like no other, you see the fear in" + userNameDefender + "'s eyes as you charge and strike! ...\n").encode('utf-8'))
+					socket.send(("With an air of beligerance like no other, you see the fear in " + userNameDefender + "'s eyes as you charge and strike! ...\n").encode('utf-8'))
 				elif(comm == 2):
 					socket.send(("Almost as if a barbarian's spirit came upon you, you charge and assail " + userNameDefender + "...\n").encode('utf-8'))	
 				elif(comm == 3):
@@ -110,6 +129,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if charge fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send((userNameDefender + "easily escapes your raging charge and attack...\n").encode('utf-8'))
@@ -130,6 +150,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if attack spell succeeds
 			if (diceRoll >= 4):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("Bright flashes of magical blue streaks pierce " + userNameDefender + "! ...\n").encode('utf-8'))	
@@ -146,8 +167,9 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 				return damage, modifier
 
-				#if attack spells fails
+			#if attack spells fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("A blasted spell misses your enemy!...\n").encode('utf-8'))	
@@ -163,6 +185,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if heal succeeds
 			if (diceRoll >= 3):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("You feel arcane healing restore you as you see the cuts on your body mend back together! ...\n").encode('utf-8'))	
@@ -175,6 +198,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if heal fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("You step aside, seeking to heal yourself, but amidst the stress of the fight, your incantation doesn't work! ...\n").encode('utf-8'))	
@@ -189,11 +213,12 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if curse succeeds
 			if (diceRoll >= 7):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a harsh tone and unkind heart, you lay a curse upon " + userNameDefender + "...\n").encode('utf-8'))	
 				elif(comm == 2):
-					socket.send(("Unlike the rest of your spells, a black smoke emerges from your wand, and you see a weakening within" + userNameDefender + "...\n").encode('utf-8'))	
+					socket.send(("Unlike the rest of your spells, a black smoke emerges from your wand, and you see a weakening within " + userNameDefender + "...\n").encode('utf-8'))	
 				elif(comm == 3):
 					socket.send(("With a need for self preservation, you cast a harsh curse of weakening...\n").encode('utf-8'))	
 
@@ -207,9 +232,10 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if curse fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send((userNameDefender + "easily evades the black slow moving smoke of the curse...\n").encode('utf-8'))	
+					socket.send((userNameDefender + " easily evades the black slow moving smoke of the curse...\n").encode('utf-8'))	
 				elif(comm == 2):
 					socket.send(("With a jeer, " + userNameDefender + " yells at you: You can't curse me, " + userNameAttacker + "...\n").encode('utf-8'))	
 				elif(comm == 3):
@@ -227,6 +253,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if normal arrow succeeds
 			if (diceRoll >= 10):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a quick zip and a sudden shriek, an arrow pierces " + userNameDefender + "! ...\n").encode('utf-8'))	
@@ -246,11 +273,12 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if normal arrow fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("A quick as lightning arrow misses your enemy!...\n").encode('utf-8'))	
 				elif(comm == 2):
-					socket.send((userNameDefender + "narrowly dodged your arrow and left it there in the ground...\n").encode('utf-8'))	
+					socket.send((userNameDefender + " narrowly dodged your arrow and left it there in the ground...\n").encode('utf-8'))	
 				elif(comm == 3):
 					socket.send(("Shooting on a moving target is quite difficult, you think, as your arrow zips by! ...\n").encode('utf-8'))
 
@@ -261,6 +289,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if dodge succeeds
 			if (diceRoll >= 12):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a deft tuck and roll, you quickly dodge your enemy's advance...\n").encode('utf-8'))	
@@ -276,6 +305,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if dodge fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("After an attempt to escape the attack, " + userNameDefender + " caught your intentions and prevented you from dodging...\n").encode('utf-8'))	
@@ -291,13 +321,14 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if fire arrow succeeds
 			if (diceRoll >= 16):
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("With a blazing arrow, you hear the searing strike wound " + userNameDefender + "! ...\n").encode('utf-8'))	
 				elif(comm == 2):
 					socket.send(("With a smoke trail behind it, a flaming blast greatly harms your enemy...\n").encode('utf-8'))	
 				elif(comm == 3):
-					socket.send(("With crackles of heat and a zipping sound, you hear" + userNameDefender + "exclaim in pain from your flaming shot...\n").encode('utf-8'))	
+					socket.send(("With crackles of heat and a zipping sound, you hear " + userNameDefender + " exclaim in pain from your flaming shot...\n").encode('utf-8'))	
 
 				#set dmg
 				damage = 9
@@ -310,6 +341,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 			#if fire arrow fails
 			else:
+
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("As the flaming arrow zips by, " + userNameDefender + " evades your shot...\n").encode('utf-8'))	
@@ -319,66 +351,93 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 					socket.send(("With the weighty head of the arrow, the flaming arrow flails and you miss your target...\n").encode('utf-8'))
 
 				return damage, modifier
-		
-###MAIN###		
-serverSocket = socket(AF_INET, SOCK_STREAM) #TCP (reliable)
-serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) #make port reusable
+
+'''
+SOCKET SETUP-------------------------------------------------------------------
+'''
+#set up a tcp socket
+serverSocket = socket(AF_INET, SOCK_STREAM) 
+serverSocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1) 
+
+#take IP and port from command line arguments (first is ip, second is port)
 serverIP = str(sys.argv[1])
 serverPort = int(sys.argv[2])
+
+#bind user entered ip and port to the socket
 serverSocket.bind((serverIP, serverPort))
 serverSocket.listen(1)
+
+'''
+PREGAME SETUP/STARTUP MESSAGES-------------------------------------------------
+'''
 print("Game ready to accept players on port " + str(serverPort))
 
-#initial stuff
+#starts at 0, goes to 1 when game is over
+gameOver = 0
+
+#print some helpful messages server side so we know when players have connected
 print("Waiting to accept first player...")
 socket1, addr1 = serverSocket.accept()
 print("Player 1 joined, waiting to accept second player...")
 socket2, addr2 = serverSocket.accept()
 print("Player 2 joined, ready to begin!")
 
-###receive everything from client###
-###everything is staggered here to remove issues of ordering###
+'''
+NAMES/CLASSES SETUP------------------------------------------------------------
+'''
+#NOTE: through the rest of the program, we send a simple "1" message from
+#the server so that the client knows when it can continue going through the 
+#rest of the program. The client waits at a .recv until it gets the 1. This 
+#allows us to control the order of everything. Everything following is 
+#staggered in such a way that only one player is sending a message at once.
 
 #send over ok
 socket1.send("1".encode('utf-8'))
-#receive
+#receive username from player 1
 userName1 = socket1.recv(1024).decode('utf-8')
 
 #send over ok
 socket2.send("1".encode('utf-8'))
-#receive
+#receive username from player 2
 userName2 = socket2.recv(1024).decode('utf-8')
 
 #send over ok
 socket1.send("1".encode('utf-8'))
-#receive
+#receive class code from player 1
 userCode1 = socket1.recv(1024).decode('utf-8')
 
 #send over ok
 socket2.send("1".encode('utf-8'))
-#receive
+#receive class code from player 2
 userCode2 = socket2.recv(1024).decode('utf-8')
 
+'''
+ATTACK LOOP--------------------------------------------------------------------
+'''
 while(1):
+	#NOTE: time.sleep statements are used to fix a strange problem we were 
+	#having with the program getting stuck. Otherwise the same staggering 
+	#from previously is used
+
 	#send over ok
 	time.sleep(0.01)
 	socket1.send("1".encode('utf-8'))
-	#receive
+	#receive attack code from player 1
 	time.sleep(0.01)
 	attackCode1 = socket1.recv(1024).decode('utf-8')
 
 	#send over ok
 	time.sleep(0.01)
 	socket2.send("1".encode('utf-8'))
-	#receive
+	#receive attack code from player 2
 	time.sleep(0.01)
 	attackCode2 = socket2.recv(1024).decode('utf-8')
 
-	#process attacks
+	#process attacks from both users!
 	damage1, modifier1 = processAttack(attackCode1, userCode1, userCode2, userName1, userName2, socket1)
 	damage2, modifier2 = processAttack(attackCode2, userCode2, userCode1, userName2, userName1, socket2)
 
-	#for testing purposes
+	#display all the values for damage and modifiers server side just for information purposes
 	print("damage player 1 does: " + str(damage1))
 	print("damage player 2 does: " + str(damage2))
 	print("player 1's modifier: " + str(modifier1))
@@ -393,6 +452,58 @@ while(1):
 	socket1.send(str(modifier1).encode('utf-8'))
 	time.sleep(0.01)
 	socket2.send(str(modifier2).encode('utf-8'))
+
+	#get healths from clients so we can determine if the game is over
+
+	#send over ok
+	time.sleep(0.01)
+	socket1.send("1".encode('utf-8'))
+	#receive health from player 1
+	time.sleep(0.01)
+	health1 = socket1.recv(1024).decode('utf-8')
+
+	#send over ok 
+	time.sleep(0.01)
+	socket2.send("1".encode('utf-8'))
+	#receive health from player 2
+	time.sleep(0.01)
+	health2 = socket2.recv(1024).decode('utf-8')
+
+	#display healths server side again for information purposes
+	print("Player 1's health: " + str(health1))
+	print("Player 2's health: " + str(health2))
+
+	#big ol' if statement to determine if someone won, if there was a tie,
+	#or if nothing happens and we just continue. Within each we set a message
+	#to send back to the clients. Finally, if the game is over, we set our
+	#game over variable to 1 so that later we can close all the sockets.
+	if (int(health1) <= 0 and int(health2) <= 0):
+		gameOver = 1
+		healthMessage1 = "Game over, it's a draw!"
+		healthMessage1 = "Game over, It's a draw!"
+	elif (int(health1) <= 0 and int(health2) > 0):
+		gameOver = 1
+		healthMessage1 = "You lose!"
+		healthMessage2 = "You win! "
+	elif (int(health1) > 0 and int(health2) <= 0):
+		gameOver = 1
+		healthMessage1 = "You win!"
+		healthMessage2 = "You lose!"
+	else:
+		healthMessage1 = "Your current health is " + health1
+		healthMessage2 = "Your current health is " + health2
+
+	#send over the old health messages
+	socket1.send(healthMessage1.encode('utf-8'))
+	socket2.send(healthMessage2.encode('utf-8'))
+
+	#if game over variable is 1, that means one player has won, so we can
+	#close the sockets and exit the loop, ending the program
+	if(gameOver == 1):
+		print("game over, shutting down...")
+		socket1.close()
+		socket2.close()
+		break
 
 	#reset modifier	
 	modifier = 0

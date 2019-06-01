@@ -19,7 +19,7 @@ print("Waiting for both players to join...")
 clientSocket.recv(1024)
 
 '''
-INTIALIZING PREGAME/NAME
+INTIALIZING PREGAME/NAME-------------------------------------------------------
 '''
 print("You find yourself in a prison, the door opens, and a gruff voice yells at you..")
 userName = input("'Whats your name, prisoner?'\n\n")
@@ -27,20 +27,23 @@ userName = input("'Whats your name, prisoner?'\n\n")
 #send over username to server
 clientSocket.send(userName.encode('utf-8'))
 
+#nice welcoming message
 print("\nOkay,", userName, "get out there and fight for your life\nBest of luck *wink*\n...\n")
 
 #initialize health
 health = 0
 
-#AND GATE!!!!
-#clientSocket.send("1".encode('utf-8'))
+
+
+'''
+CHARACTER SELECT---------------------------------------------------------------
+'''
+#receive ok for character select
 clientSocket.recv(1024)
 
-'''
-CHARACTER SELECT
-'''
 print("As you get up, the chains jangle, and you look down at yourself...\n")
 
+#loop so the user can pick their class. if they type in something invalid the loop will start over
 while(1):
 	global userCode
 	userClass = input("Choose your class (type the letter and hit enter):\na. fighter\nb. wizard\nc. ranger\n")
@@ -71,11 +74,11 @@ while(1):
 	else:
 		print("Your vision is foggy, and you can't quite see. As you rub your eyes you look down and see...\n")
 		
-#send over character code		
+#send over character code to server for processing	
 clientSocket.send(userCode.encode('utf-8'))
 
 '''
-ENVIRONMENT SELECT
+ENVIRONMENT SELECT-------------------------------------------------------------
 '''
 environment = random.randint(0,5)
 
@@ -90,12 +93,13 @@ else:
 	print("Among the bloodthirsty fans and vendors trying to make a living, bets are tossed around and an armed opponent challenges you...\n")
 
 '''
-ATTACK SELECT
+ATTACK SELECT------------------------------------------------------------------
 '''
 while(1):
-	#time.sleep(2)
+	#receive ok for attack select
 	clientSocket.recv(1024)
 
+	#loop for selecting (again will repeat until a valid input is entered)
 	while(1):
 		print("\n")
 
@@ -113,7 +117,7 @@ while(1):
 				##NEGATE ALL DAMAGE? PERHAPS JUST DONT CHANGE THEIR HEALTH?
 				break
 			#charge
-			elif(fighterAction == "C" or fighterAction == "c" or fighterAction == "charge" or fighterAction == "charge"):
+			elif(fighterAction == "C" or fighterAction == "c" or fighterAction == "Charge" or fighterAction == "charge"):
 				attackCode = "A3"
 				#MAKE IT SO THAT THEY TAKE EXTRA DAMAGE
 				break
@@ -158,16 +162,20 @@ while(1):
 		else:
 			print("The nerves got to you and you selected an invalid attack, try again...\n")
 
-	#send attack code
+	#send attack code back to server for processing
 	clientSocket.send(attackCode.encode('utf-8'))
 
-	message = clientSocket.recv(1024).decode('utf-8')
-	print("\n" + message)
+	#attack message from server so the user knows if their attack hit the opponent or not
+	attackMessage = clientSocket.recv(1024).decode('utf-8')
+	print("\n" + attackMessage)
 
+	#receive damage taken and modifier from the server
 	damage = int(clientSocket.recv(1024).decode('utf-8'))
 	modifier = int(clientSocket.recv(1024).decode('utf-8'))
 
-	#modifier stuff
+	#modifier stuff: if modifier is 1, a dodge has succeeded so no damage it 
+	#taken. If modifier is 2, healing has succeeded so health should increase
+	#by 5. If modifier is 3, curse has succeeded so reduce damage taken by 5
 	if (modifier == 1):
 		damage = 0
 	elif (modifier == 2):
@@ -180,15 +188,25 @@ while(1):
 	#subtract damage from health
 	health -= damage
 
+	#receive ok for sending over health
+	clientSocket.recv(1024)
+	#send over health
+	clientSocket.send(str(health).encode('utf-8'))
+
+	#receive message that either says how much health you have or that you have
+	#won/lost the game
+	healthMessage = clientSocket.recv(1024).decode('utf-8')
+
 	print("damage taken: " + str(damage))
 
-	# if(health <= 0):
-	# 	break
+	print(healthMessage + "\n")
 
-	print("your current health: " + str(health) + "\n")
+	#these message signify the end of the game, so we can close the socket
+	#and exit the loop once we receive one of these
+	if (healthMessage == "You win!" or healthMessage == "You lose!"):
+		clientSocket.close()
+		break
+
 
 	#reset modifier
 	modifier = 0
-
-#print("you died!")
-#clientSocket.close()
