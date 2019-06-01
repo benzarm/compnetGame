@@ -4,36 +4,52 @@ import threading
 import random
 import time
 
-clientSocket = socket(AF_INET, SOCK_STREAM) #TCP socket
+def print_slow(str):
+	for letter in str:
+		sys.stdout.write(letter)
+		sys.stdout.flush()
+		time.sleep(0.02)
+
+'''
+SOCKET SETUP-------------------------------------------------------------------
+'''
+#create socket
+clientSocket = socket(AF_INET, SOCK_STREAM)
+
+#take ip and port from command line
 serverIP = str(sys.argv[1])
 serverPort = int(sys.argv[2])
+
+#connect to server
 clientSocket.connect((serverIP, serverPort))
+
+#helpful message :) 
 print("Connected to server on port " + str(serverPort) + ". Say hello!")
 
-#initializing stuff
-print("\n ~ Welcome to Trent & Matt's Wild [text] Adventure! ~")
-print("Waiting for both players to join...")
-
-#AND GATE!!!!
-#clientSocket.send("1".encode('utf-8'))
-clientSocket.recv(1024)
+#welcome message
+print_slow("\n ~ Welcome to Trent & Matt's Wild [text] Adventure! ~")
+print("\n")
+print_slow("Waiting for both players to join...")
+print("\n")
 
 '''
 INTIALIZING PREGAME/NAME-------------------------------------------------------
 '''
-print("You find yourself in a prison, the door opens, and a gruff voice yells at you..")
-userName = input("'Whats your name, prisoner?'\n\n")
+#receive ok for starting
+clientSocket.recv(1024)
+print_slow("You find yourself in a prison, the door opens, and a gruff voice yells at you..")
+print("\n")
+print_slow("'Whats your name, prisoner?'\n")
+userName = input()
 
 #send over username to server
 clientSocket.send(userName.encode('utf-8'))
 
 #nice welcoming message
-print("\nOkay,", userName, "get out there and fight for your life\nBest of luck *wink*\n...\n")
+print_slow(("\nOkay, " + userName + ", get out there and fight for your life! Best of luck...\n"))
 
 #initialize health
 health = 0
-
-
 
 '''
 CHARACTER SELECT---------------------------------------------------------------
@@ -41,7 +57,7 @@ CHARACTER SELECT---------------------------------------------------------------
 #receive ok for character select
 clientSocket.recv(1024)
 
-print("As you get up, the chains jangle, and you look down at yourself...\n")
+print_slow("As you get up, the chains jangle, and you look down at yourself...\n")
 
 #loop so the user can pick their class. if they type in something invalid the loop will start over
 while(1):
@@ -83,14 +99,14 @@ ENVIRONMENT SELECT-------------------------------------------------------------
 environment = random.randint(0,5)
 
 if(environment == 1):
-	print("And as the door opens, you are nearly blinded with the sharp reflection of the sun on a sea of sand.")
-	print("The heat is draining, but in the distance an armed opponent is walking towards you...\n") 
+	print_slow("And as the door opens, you are nearly blinded with the sharp reflection of the sun on a sea of sand.")
+	print_slow("The heat is draining, but in the distance an armed opponent is walking towards you...\n") 
 elif(environment == 2):
-	print("And as the door opens, the superficial torch light becomes the brightest beacon in a dull forest.")
+	print_slow("And as the door opens, the superficial torch light becomes the brightest beacon in a dull forest.")
 	print("As the wind howls and you see red eyes blink in the distance, a figure, with weapon in hand approaches...\n")
 else:
-	print("And as the door slams open, a deafening roar of shouts and screams and song from a crowd cheer at your potential demise.")
-	print("Among the bloodthirsty fans and vendors trying to make a living, bets are tossed around and an armed opponent challenges you...\n")
+	print_slow("And as the door slams open, a deafening roar of shouts and screams and song from a crowd cheer at your potential demise.")
+	print_slow("Among the bloodthirsty fans and vendors trying to make a living, bets are tossed around and an armed opponent challenges you...\n")
 
 '''
 ATTACK SELECT------------------------------------------------------------------
@@ -167,7 +183,7 @@ while(1):
 
 	#attack message from server so the user knows if their attack hit the opponent or not
 	attackMessage = clientSocket.recv(1024).decode('utf-8')
-	print("\n" + attackMessage)
+	print_slow(("\n" + attackMessage + "\n"))
 
 	#receive damage taken and modifier from the server
 	damage = int(clientSocket.recv(1024).decode('utf-8'))
@@ -197,9 +213,9 @@ while(1):
 	#won/lost the game
 	healthMessage = clientSocket.recv(1024).decode('utf-8')
 
-	print("damage taken: " + str(damage))
+	print_slow(("damage taken: " + str(damage) + "\n"))
 
-	print(healthMessage + "\n")
+	print_slow((healthMessage + "\n"))
 
 	#these message signify the end of the game, so we can close the socket
 	#and exit the loop once we receive one of these

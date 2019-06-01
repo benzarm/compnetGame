@@ -444,7 +444,7 @@ while(1):
 	print("player 2's modifier: " + str(modifier2) + "\n")
 
 	#send over damage and modifiers to server to keep track of health clientside
-	time.sleep(0.01)
+	time.sleep(3)
 	socket1.send(str(damage2).encode('utf-8'))
 	time.sleep(0.01)
 	socket2.send(str(damage1).encode('utf-8'))
