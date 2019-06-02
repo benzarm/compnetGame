@@ -3,7 +3,7 @@ Welcome to Matt & Trent's Wild [text] Fighter!
 In this game, you'll find yourself pitted against a worthy opponent in one of 4
 randomly generated environments...
 
-Setup is simple:
+SETUP is simple:
 1)  Start up the server using wildServer.py, giving the IP and PORT as command 
 	line arguments, in that order. 
 		Example: $ python3 wildServer.py 192.168.0.107 46000
@@ -17,11 +17,11 @@ Setup is simple:
 
 3)  Do the same thing for the second player!
 
-4) You are ready to FIGHT! Follow the instructions displayed on the client and
+4)  You are ready to FIGHT! Follow the instructions displayed on the client and
 	be sure not to enter any commands unless prompted. This could screw things
 	up a bit. 
 
-Gameplay is as follows:
+GAMEPLAY is as follows:
 1)  Both players will first enter their names, one after the other. 
 
 2)  Then, each will pick a class. There are three classes, each with a slight 
@@ -39,7 +39,7 @@ Gameplay is as follows:
 
 	The attacks are as follows:
 
-		  /| ____________________________
+	  /| ____________________________
 	O|===|* >___FIGHTER__________________>
 	      \|
 
@@ -75,7 +75,10 @@ Gameplay is as follows:
 4)  Once one player drops to 0 health, the game will be over and a victor will
 	be crowned! Who will conquer? Who will come out on top?
 
-A few important notes:
+IMPORTANT NOTES:
  - Standard width terminal (80) is ideal.
  - Make sure to download all the files in the GitHub repo, including the music
    files, and keep them in the same folder as the client python file. 
+ - Make sure to install the mixer python library before playing for peak 
+   game quality (the music really makes it). Use this command: 
+   		python3 -m pip install -U pygame --user
