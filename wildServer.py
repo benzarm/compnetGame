@@ -1,3 +1,6 @@
+#Matt and Trent's WILD [text] Fighter
+#Computer Networks w/ Dr. Dingler 
+#Server
 from socket import *
 import threading
 import sys
@@ -41,7 +44,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		###SLASH###
 		if (attackCode == "A1"):
 			#if slash succeeds
-			if (diceRoll >= 5):
+			if (diceRoll >= 6):
 
 				#send one of three preset messages
 				if(comm == 1):
@@ -108,7 +111,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		###CHARGE###
 		elif (attackCode == "A3"):
 			#if charge succeeds
-			if (diceRoll >= 12):
+			if (diceRoll >= 13):
 
 				#send one of three preset messages
 				if(comm == 1):
@@ -132,7 +135,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send((userNameDefender + "easily escapes your raging charge and attack...\n").encode('utf-8'))
+					socket.send((userNameDefender + " easily escapes your raging charge and attack...\n").encode('utf-8'))
 				elif(comm == 2):
 					socket.send(("With a big belly laugh, " + userNameDefender + " yells at you: Is that actually all you've got, " + userNameAttacker + "? ...\n").encode('utf-8'))
 				elif(comm == 3):
@@ -484,7 +487,7 @@ while(1):
 	elif (int(health1) <= 0 and int(health2) > 0):
 		gameOver = 1
 		healthMessage1 = "You lose!"
-		healthMessage2 = "You win! "
+		healthMessage2 = "You win!"
 	elif (int(health1) > 0 and int(health2) <= 0):
 		gameOver = 1
 		healthMessage1 = "You win!"

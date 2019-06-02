@@ -1,3 +1,6 @@
+#Matt and Trent's WILD [text] Fighter
+#Computer Networks w/ Dr. Dingler 
+#Client
 from socket import *
 import sys
 import threading
@@ -5,12 +8,22 @@ import random
 import time
 from pygame import mixer
 
+'''
+PRINT SLOW FUNCTION
+Takes in a string and prints it out character by character as a desired speed 
+dependent on the amount of time to sleep between each character
+'''
 def print_slow(str):
 	for letter in str:
 		sys.stdout.write(letter)
 		sys.stdout.flush()
 		time.sleep(0.02)
 
+'''
+PRINT TITLE FUNCTION
+Same as previous function but only for printing the game logo; only difference
+is that this one prints significantly faster
+'''
 def print_title(str):
 	for letter in str:
 		sys.stdout.write(letter)
@@ -34,11 +47,12 @@ clientSocket.connect((serverIP, serverPort))
 #helpful message :) 
 print("Connected to server on port " + str(serverPort) + ". Say hello!")
 
+#play the greatest song evr made (2007scape for lyfe)
 mixer.init()
 mixer.music.load("scape_main.mp3")
 mixer.music.play()
 
-#welcome message
+#SICK nasty LOGO
 print_title("         _    _        _                                _              \n")
 print_title("        | |  | |      | |                              | |             \n")
 print_title("        | |  | |  ___ | |  ___  ___   _ __ ___    ___  | |_  ___       \n")
@@ -70,8 +84,6 @@ print("")
 print_slow("Waiting for both players to join...")
 print("")
 
-
-
 '''
 INTIALIZING PREGAME/NAME-------------------------------------------------------
 '''
@@ -87,6 +99,7 @@ clientSocket.send(userName.encode('utf-8'))
 
 #nice welcoming message
 print_slow(("\nOkay, " + userName + ", get out there and fight for your life! Best of luck...\n"))
+print("\n")
 
 #initialize health
 health = 0
@@ -136,7 +149,7 @@ clientSocket.send(userCode.encode('utf-8'))
 '''
 ENVIRONMENT SELECT-------------------------------------------------------------
 '''
-environment = random.randint(1,3)
+environment = random.randint(1,4)
 
 if(environment == 1):
 	print_slow("And as the door opens, you are nearly blinded with the sharp reflection of the sun on a sea of sand. ")
@@ -144,6 +157,9 @@ if(environment == 1):
 elif(environment == 2):
 	print_slow("And as the door opens, the superficial torch light becomes the brightest beacon in a dull forest. ")
 	print_slow("As the wind howls and you see red eyes blink in the distance, a figure, with weapon in hand approaches...\n")
+elif(environment == 3):
+	print_slow("And as the door opens, you find yourself on the roof of a massive castle, the wind's deafening howling disorienting you. ")
+	print_slow("Across the roof you see another figure emerge from a door, weapon in hand. Only one of you is leaving this roof alive...\n")
 else:
 	print_slow("And as the door slams open, a deafening roar of shouts and screams and song from a crowd cheer at your potential demise. ")
 	print_slow("Among the bloodthirsty fans and vendors trying to make a living, bets are tossed around and an armed opponent challenges you...\n")
@@ -162,13 +178,13 @@ while(1):
 		#fighter options
 		if(userCode == "A"):
 			#prompt
-			fighterAction = input("Choose an attack (type the letter and hit enter):\na. Slash\nb. Roll\nc. Charge\n")
+			fighterAction = input("Choose an attack (type the letter and hit enter):\na. Slash\nb. Block\nc. Charge\n")
 			#slash
 			if(fighterAction == "A" or fighterAction == "a" or fighterAction == "Slash" or fighterAction == "slash"):
 				attackCode = "A1"
 				break
 			#roll
-			elif(fighterAction == "B" or fighterAction == "b" or fighterAction == "Roll" or fighterAction == "roll"):
+			elif(fighterAction == "B" or fighterAction == "b" or fighterAction == "Block" or fighterAction == "block"):
 				attackCode = "A2"
 				##NEGATE ALL DAMAGE? PERHAPS JUST DONT CHANGE THEIR HEALTH?
 				break
