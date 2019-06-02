@@ -11,6 +11,13 @@ def print_slow(str):
 		sys.stdout.flush()
 		time.sleep(0.02)
 
+def print_title(str):
+	for letter in str:
+		sys.stdout.write(letter)
+		sys.stdout.flush()
+		time.sleep(0.002)
+	#print("", end = "\n")
+
 '''
 SOCKET SETUP-------------------------------------------------------------------
 '''
@@ -32,10 +39,36 @@ mixer.music.load("scape_main.mp3")
 mixer.music.play()
 
 #welcome message
-print_slow("\n ~ Welcome to Trent & Matt's Wild [text] Adventure! ~")
-print("\n")
+print_title("         _    _        _                                _              \n")
+print_title("        | |  | |      | |                              | |             \n")
+print_title("        | |  | |  ___ | |  ___  ___   _ __ ___    ___  | |_  ___       \n")
+print_title("        | |/\\| | / _ \\| | / __|/ _ \\ | '_ ` _ \\  / _ \\ | __|/ _ \\      \n")
+print_title("        \\  /\\  /|  __/| || (__| (_) || | | | | ||  __/ | |_| (_) |     \n")
+print_title("         \\/  \\/  \\___||_| \\___|\\___/ |_| |_| |_| \\___|  \\__|\\___/      \n")
+print_title(" ___  ___        _    _              _____                  _   _      \n")
+print_title(" |  \\/  |       | |  | |     ___    |_   _|                | | ( )     \n")
+print_title(" | .  . |  __ _ | |_ | |_   ( _ )     | | _ __  ___  _ __  | |_|/ ___  \n")
+print_title(" | |\\/| | / _` || __|| __|  / _ \\/\\   | || '__|/ _ \\| '_ \\ | __| / __| \n")
+print_title(" | |  | || (_| || |_ | |_  | (_>  <   | || |  |  __/| | | || |_  \\__ \\ \n")
+print_title(" \\_|  |_/ \\__,_| \\__| \\__|  \\___/\\/   \\_/|_|   \\___||_| |_| \\__| |___/ \n")
+print_title("                     _    _  _____  _     ______                       \n")
+print_title("                    | |  | ||_   _|| |    |  _  \\                      \n")
+print_title("                    | |  | |  | |  | |    | | | |                      \n")
+print_title("                    | |/\\| |  | |  | |    | | | |                      \n")
+print_title("                    \\  /\\  / _| |_ | |____| |/ /                       \n")
+print_title("                     \\/  \\/  \\___/ \\_____/|___/                        \n")
+print_title(" ___  _               _   ___  ______  _         _      _              \n")
+print_title("|  _|| |             | | |_  | |  ___|(_)       | |    | |             \n")
+print_title("| |  | |_  ___ __  __| |_  | | | |_    _   __ _ | |__  | |_  ___  _ __ \n")
+print_title("| |  | __|/ _ \\ \\/ /|  __| | | |  _|  | | / _` || '_ \\ | __|/ _ \\| '__|\n")
+print_title("| |  | |_|  __/ >  < | |_  | | | |    | || (_| || | | || |_|  __/| |   \n")
+print_title("| |_  \\__|\\___|/_/\\_\\ \\__|_| | \\_|    |_| \\__, ||_| |_| \\__|\\___||_|   \n")
+print_title("|___|                    |___|             __/ |                       \n")
+print_title("                                          |___/                        \n")
+                                                                                   
+print("")
 print_slow("Waiting for both players to join...")
-print("\n")
+print("")
 
 
 
@@ -202,7 +235,7 @@ while(1):
 	if (modifier == 1):
 		damage = 0
 	elif (modifier == 2):
-		health += 3
+		health += 4
 	elif (modifier == 3):
 		damage -= 5
 		if (damage < 0):

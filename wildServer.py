@@ -77,15 +77,15 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		elif (attackCode == "A2"):
 
 			#if block succeeds
-			if (diceRoll >= 14):
+			if (diceRoll >= 9):
 
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send(("With a shockingly easy pivot... like very easily, you dodge out of " + userNameDefender + "'s attack! ...\n").encode('utf-8'))
+					socket.send(("You plant your feet firmly and hold up your shield, blocking all incoming attacks from " + userNameDefender + "...\n").encode('utf-8'))
 				elif(comm == 2):
-					socket.send(("A tuck and a roll is all you needed to escape " + userNameDefender + "'s harm! ...\n").encode('utf-8'))
+					socket.send(("A quick block is all you needed to escape " + userNameDefender + "'s harm! ...\n").encode('utf-8'))
 				elif(comm == 3):
-					socket.send(("With catlike reflexes, you quickly evade their attack...\n").encode('utf-8'))
+					socket.send(("With catlike reflexes, you quickly at the last second whip out your shield for a clutch block...\n").encode('utf-8'))
 
 				#set modifier to dodge for later processing
 				modifier = 1
@@ -97,11 +97,11 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 
 				#send one of three preset messages
 				if(comm == 1):
-					socket.send((userNameDefender + " scoffs: '" + userNameAttacker + ", great job stumbling away from me as you fail your evasion...\n").encode('utf-8'))
+					socket.send((userNameDefender + " scoffs: '" + userNameAttacker + ", great job trying to block my attack, lo$er...\n").encode('utf-8'))
 				elif(comm == 2):
-					socket.send(("With a poorly timed dodge tactic, you can't succesfully dodge...\n").encode('utf-8'))
+					socket.send(("With a poorly timed block, you can't succesfully defend yourself...\n").encode('utf-8'))
 				elif(comm == 3):
-					socket.send(("A misplaced twig trips you on your attempt to evade their advances...\n").encode('utf-8'))
+					socket.send(("A misplaced twig trips you and you fail to bring up your shield in time...\n").encode('utf-8'))
 
 				return damage, modifier
 
@@ -119,7 +119,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 					socket.send(("Somewhere in between anger and determination, a charge and swing like no other strike true! ...\n").encode('utf-8'))
 
 				#set dmg
-				damage = 5
+				damage = 6
 
 				#increased dmg against ranger
 				if (opponentCode == "C"):
@@ -176,7 +176,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 				elif(comm == 2):
 					socket.send(("A searing spot remains in the ground from your spell where your enemy lept from! ...\n").encode('utf-8'))	
 				elif(comm == 3):
-					socket.send((userNameDefender + "Can't even hit a spell, " + userNameAttacker + "? ...\n").encode('utf-8'))	
+					socket.send((userNameDefender + ": 'Can't even hit a spell, " + userNameAttacker + "?' ...\n").encode('utf-8'))	
 
 				return damage, modifier
 
@@ -184,13 +184,13 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		elif (attackCode == "B2"):
 
 			#if heal succeeds
-			if (diceRoll >= 3):
+			if (diceRoll >= 6):
 
 				#send one of three preset messages
 				if(comm == 1):
 					socket.send(("You feel arcane healing restore you as you see the cuts on your body mend back together! ...\n").encode('utf-8'))	
 				elif(comm == 2):
-					socket.send(("Much to the surprise of " + userNameDefender + " , you are feeling much better from your healing! ...\n").encode('utf-8'))	
+					socket.send(("Much to the surprise of " + userNameDefender + ", you are feeling much better from your healing! ...\n").encode('utf-8'))	
 				elif(comm == 3):
 					socket.send(("The strength re-enters your body as you see a red healing energy spiral though your veins! ...\n").encode('utf-8'))	
 				modifier = 2
@@ -252,7 +252,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		if (attackCode == "C1"):
 
 			#if normal arrow succeeds
-			if (diceRoll >= 10):
+			if (diceRoll >= 9):
 
 				#send one of three preset messages
 				if(comm == 1):
@@ -288,7 +288,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		elif (attackCode == "C2"):
 
 			#if dodge succeeds
-			if (diceRoll >= 12):
+			if (diceRoll >= 7):
 
 				#send one of three preset messages
 				if(comm == 1):
@@ -320,7 +320,7 @@ def processAttack(attackCode, userCode, opponentCode, userNameAttacker, userName
 		elif (attackCode == "C3"):
 
 			#if fire arrow succeeds
-			if (diceRoll >= 16):
+			if (diceRoll >= 13):
 
 				#send one of three preset messages
 				if(comm == 1):
@@ -444,11 +444,11 @@ while(1):
 	print("player 2's modifier: " + str(modifier2) + "\n")
 
 	#send over damage and modifiers to server to keep track of health clientside
-	time.sleep(3)
+	time.sleep(2)
 	socket1.send(str(damage2).encode('utf-8'))
 	time.sleep(0.01)
 	socket2.send(str(damage1).encode('utf-8'))
-	time.sleep(0.01)
+	time.sleep(2)
 	socket1.send(str(modifier1).encode('utf-8'))
 	time.sleep(0.01)
 	socket2.send(str(modifier2).encode('utf-8'))
@@ -480,7 +480,7 @@ while(1):
 	if (int(health1) <= 0 and int(health2) <= 0):
 		gameOver = 1
 		healthMessage1 = "Game over, it's a draw!"
-		healthMessage1 = "Game over, It's a draw!"
+		healthMessage2 = "Game over, It's a draw!"
 	elif (int(health1) <= 0 and int(health2) > 0):
 		gameOver = 1
 		healthMessage1 = "You lose!"
@@ -490,8 +490,8 @@ while(1):
 		healthMessage1 = "You win!"
 		healthMessage2 = "You lose!"
 	else:
-		healthMessage1 = "Your current health is " + health1
-		healthMessage2 = "Your current health is " + health2
+		healthMessage1 = "Your current health is " + health1 + " and your opponent's health is " + health2
+		healthMessage2 = "Your current health is " + health2 + " and your opponent's health is " + health1
 
 	#send over the old health messages
 	socket1.send(healthMessage1.encode('utf-8'))
