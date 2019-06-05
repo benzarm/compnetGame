@@ -4,20 +4,24 @@ In this game, you'll find yourself pitted against a worthy opponent in one of 4
 randomly generated environments...
 
 SETUP is simple:
-1)  Start up the server using wildServer.py, giving the IP and PORT as command 
+1) In the command prompt, enter:
+	python3 -m pip install -U pygame --user
+   to install the mixer python library that adds a soundtrack to the game! (It really adds to the gameplay!)
+   
+2) Start up the server using wildServer.py, giving the IP and PORT as command 
 	line arguments, in that order. 
 		Example: $ python3 wildServer.py 192.168.0.107 46000
 
 	You should get a message saying "waiting to accept first player..." This 
 	means you're ready to accept the fighters!
 
-2)  In a new window, connect to the server using wildClient.py, also giving the
+3)  In a new window, connect to the server using wildClient.py, also giving the
 	same command line arguments as the server. 
    		Example: $ python3 wildClient.py 192.168.0.107 46000
 
-3)  Do the same thing for the second player!
+4)  Do the same thing for the second player!
 
-4)  You are ready to FIGHT! Follow the instructions displayed on the client and
+5)  You are ready to FIGHT! Follow the instructions displayed on the client and
 	be sure not to enter any commands unless prompted. This could screw things
 	up a bit. 
 
@@ -79,6 +83,3 @@ IMPORTANT NOTES:
  - Standard width terminal (80) is ideal.
  - Make sure to download all the files in the GitHub repo, including the music
    files, and keep them in the same folder as the client python file. 
- - Make sure to install the mixer python library before playing for peak 
-   game quality (the music really makes it). Use this command: 
-   		python3 -m pip install -U pygame --user
